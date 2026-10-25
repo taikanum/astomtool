@@ -10,18 +10,31 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.9
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps
+        run: |
+          if [ -f package.json ]; then npm install --legacy-peer-deps || yarn || true; fi
+          ls -la
       - name: Build APK
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
           cd android
+          echo "Gradle version now:"
+          gradle --version
           rm -rf gradle/wrapper
-          mkdir -p gradle/wrapper
-          gradle wrapper --gradle-version 8.9 || true
+          gradle wrapper --gradle-version 8.9
           chmod +x gradlew
           echo "sdk.dir=$ANDROID_HOME" > local.properties
           ./gradlew assembleDebug --stacktrace
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: astomtool-APK
           path: android/app/build/outputs/apk/debug/*.apk
