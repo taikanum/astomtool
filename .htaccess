@@ -1,0 +1,21 @@
+Options -Indexes
+DirectoryIndex tracking.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^s/([A-Za-z0-9_-]{2,32})/?$ tracking.php?t=l&s=$1&i=1 [L,QSA]
+  RewriteRule ^v1/([a-z]+)/?$ tracking.php?t=v1&r=$1&i=1 [L,QSA]
+  RewriteRule ^js/?$ tracking.php?t=js&i=1 [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+<FilesMatch "\.(sqlite|sqlite-wal|sqlite-shm)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>

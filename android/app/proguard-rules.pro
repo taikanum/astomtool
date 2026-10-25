@@ -1,0 +1,2 @@
+-keep class ai.venice.osinthub.** { *; }
+-keepattributes *Annotation*

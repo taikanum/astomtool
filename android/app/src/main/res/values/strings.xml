@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OSINT Hub</string>
+    <string name="tracker_channel">Location tracker</string>
+    <string name="watch_channel">Watchlist alerts</string>
+</resources>
