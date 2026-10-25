@@ -14,17 +14,15 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 8.9
-      - name: Fix project
+      - name: Fix project to 8.9
         run: |
           cd android
-          if [ ! -f gradlew ]; then
-            gradle wrapper --gradle-version 8.9
-          else
-            echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.9-all.zip" > gradle/wrapper/gradle-wrapper.properties
-            cat gradle/wrapper/gradle-wrapper.properties
-          fi
+          rm -rf gradle/wrapper
+          mkdir -p gradle/wrapper
+          gradle wrapper --gradle-version 8.9
           chmod +x gradlew
           echo "sdk.dir=$ANDROID_HOME" > local.properties
+          cat gradle/wrapper/gradle-wrapper.properties
       - name: Build APK
         working-directory: android
         run: ./gradlew assembleDebug --stacktrace
