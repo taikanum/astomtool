@@ -15,18 +15,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: |
+      - name: Install deps
+        run: |
           if [ -f package.json ]; then npm install --legacy-peer-deps; fi
-          if [ -f yarn.lock ]; then yarn install || true; fi
       - name: Build APK
         run: |
           cd android
           gradle wrapper --gradle-version 8.9
           chmod +x gradlew
           echo "sdk.dir=$ANDROID_HOME" > local.properties
-          ./gradlew assembleDebug --stacktrace --info 2>&1 | tail -n 200
-      - uses: actions/upload-artifact@v4
-        if: always()
+          ./gradlew assembleDebug --stacktrace
+      - name: Upload APK
+        if: success()
+        uses: actions/upload-artifact@v4
         with:
           name: astomtool-APK
-          path: android/app/build/outputs/apk/debug/*.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
