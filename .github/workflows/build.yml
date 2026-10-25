@@ -10,25 +10,24 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Setup Gradle
+      - name: Setup Gradle 8.9
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 8.5
+          gradle-version: 8.9
       - name: Fix project
         run: |
           cd android
-          # 1. create gradlew if missing
           if [ ! -f gradlew ]; then
-            gradle wrapper --gradle-version 8.5
+            gradle wrapper --gradle-version 8.9
+          else
+            echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.9-all.zip" > gradle/wrapper/gradle-wrapper.properties
+            cat gradle/wrapper/gradle-wrapper.properties
           fi
           chmod +x gradlew
-          # 2. create local.properties for SDK
           echo "sdk.dir=$ANDROID_HOME" > local.properties
-          cat local.properties
-          ls -la
       - name: Build APK
         working-directory: android
-        run: ./gradlew assembleDebug --stacktrace --info
+        run: ./gradlew assembleDebug --stacktrace
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
