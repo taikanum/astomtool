@@ -10,24 +10,26 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Setup Gradle 8.9
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: 8.9
-      - name: Fix project to 8.9
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Fix wrapper to 8.9
         run: |
           cd android
           rm -rf gradle/wrapper
           mkdir -p gradle/wrapper
-          gradle wrapper --gradle-version 8.9
+          gradle wrapper --gradle-version 8.9 || ./gradlew wrapper --gradle-version 8.9
           chmod +x gradlew
           echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "sdk dir is $ANDROID_HOME"
           cat gradle/wrapper/gradle-wrapper.properties
-      - name: Build APK
+      - name: Build Debug APK
         working-directory: android
         run: ./gradlew assembleDebug --stacktrace
       - name: Upload APK
+        if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
           name: astomtool-APK
-          path: android/app/build/outputs/apk/debug/*.apk
+          path: |
+            android/app/build/outputs/apk/debug/*.apk
+            android/app/build/outputs/
